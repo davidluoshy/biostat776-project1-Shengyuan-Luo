@@ -1,0 +1,67 @@
+---
+title: "biostat776-project1-Shengyuan-Luo"
+author: "davidluoshy"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Project 1 - setup
+
+Here I load packages "here" and "tidyverse"
+
+```{r}
+library("here")
+library("tidyverse")
+```
+
+Next I create a directory named "data." The if statement helps avoid re-creating the directory if it already exists.
+
+```{r}
+if (!dir.exists(here("data"))) {
+    dir.create(here("data"))
+}
+```
+
+I use the following code to download the dataset. Again, the if statement checks if the dataset already exists. If so, data will not be re-downloaded.
+
+```{r}
+if (!file.exists(here("data", "chocolate.RDS"))) {
+    url_csv <- "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-01-18/chocolate.csv"
+    chocolate <- readr::read_csv(url_csv)
+
+    # save the file to RDS objects
+    saveRDS(chocolate, file = here("data", "chocolate.RDS"))
+}
+```
+
+Making the dataset a tibble and taking a glimpse at the data.
+
+```{r}
+chocolate <- readRDS(here("data", "chocolate.RDS"))
+as_tibble(chocolate)
+glimpse(chocolate)
+```
+
+## Part 1: 
+
+## Part 2:
+
+## Part 3:
+
+## Part 4:
+
+## Part 5:
+
+## Part6: Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
