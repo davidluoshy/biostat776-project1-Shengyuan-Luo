@@ -11,11 +11,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Project 1 - setup
 
-Here I load packages "here" and "tidyverse"
+Here I load packages "here", "tidyverse", and "tidytuesday"
 
 ```{r}
 library("here")
 library("tidyverse")
+install.packages("pak")
+pak::pak("dslc-io/tidytuesdayR")
 ```
 
 Next I create a directory named "data." The if statement helps avoid re-creating the directory if it already exists.
@@ -51,7 +53,6 @@ glimpse(chocolate)
 1.  Make a histogram of the `rating` scores to visualize the overall distribution of scores. Change the number of bins from the default to 10, 15, 20, and 25. Pick on the one that you think looks the best. Explain what the difference is when you change the number of bins and explain why you picked the one you did.
 
     ```{r}
-    library("tidyverse")
     qplot(rating, data = chocolate, bins =10)
     ```
 
@@ -59,17 +60,79 @@ glimpse(chocolate)
 
 2.  Consider the countries where the beans originated from. How many reviews come from each country of bean origin?
 
+    ```{r}
+    chocolate  %>%
+      count(country_of_bean_origin)
+    ```
+
 3.  What is average `rating` scores from reviews of chocolate bars that have Ecuador as `country_of_bean_origin` in this dataset? For this same set of reviews, also calculate (1) the total number of reviews and (2) the standard deviation of the `rating` scores. Your answer should be a new data frame with these three summary statistics in three columns. Label the name of these columns `mean`, `sd`, and `total`.
+
+    ```{r}
+        choc.Ecuador <- filter(chocolate, country_of_bean_origin =="Ecuador")
+        n_Ecuador <- tibble(country_of_bean_origin="Ecuador", n=1)
+        left_join(x=choc.Ecuador, y=n_Ecuador, by="country_of_bean_origin")
+        
+        summarize(choc.Ecuador,
+           mean = mean(rating, na.rm = TRUE),
+           sd = sd(rating,  na.rm = TRUE),
+           total = sum(n,  na.rm = TRUE)
+         )
+    ```
 
 4.  Which company (name) makes the best chocolate (or has the highest ratings on average) with beans from Ecuador?
 
+    ```{r}
+      choc.Ecuador <- filter(chocolate, country_of_bean_origin =="Ecuador")
+      
+      best_chocolate <- choc.Ecuador%>%
+        group_by(company_manufacturer) %>%
+        summarize(
+          mean_by_company = mean(rating, na.rm = TRUE)
+        )
+      
+       print(arrange(best_chocolate, desc(mean_by_company)))
+    ```
+
+    Amano, Benoit Nihant, Beschle, Durci and Smooth Chocolator tie as the companies with the highest average ratings (4.0).
+
 5.  Calculate the average rating across all country of origins for beans. Which top 3 countries (for bean origin) have the highest ratings on average?
+
+    ```{r}
+     best_chocolate_country_origin <- chocolate %>%
+        group_by(country_of_bean_origin) %>%
+        summarize(
+          mean_by_country = mean(rating, na.rm = TRUE)
+        )
+     
+     print(arrange(best_chocolate_country_origin, desc(mean_by_country)))
+    ```
+
+    Tobago, China and Sao Tome & Principe are the top 3 countries (for bean origin) that have the highest ratings on average?
 
 6.  Following up on the previous problem, now remove any countries of bean origins that have less than 10 chocolate bar reviews. Now, which top 3 countries have the highest ratings on average?
 
-7.  For this last part, let’s explore the relationship between percent chocolate and ratings.
+    ```{r}
+        chocolate_n <- chocolate %>%
+          mutate(n=1)
+      
+        chocolate_n2 <- chocolate_n %>%
+          group_by(country_of_bean_origin) %>%
+          mutate(n_by_origin_country=sum(n, na.rm = TRUE))
 
-8.  
+        chocolate_n3 <- filter(chocolate_n2, n_by_origin_country>=10)
+
+        best_chocolate_country_origin_n3 <- chocolate_n3 %>%
+        group_by(country_of_bean_origin) %>%
+        summarize(
+          mean_by_country = mean(rating, na.rm = TRUE)
+        )
+     
+     print(arrange(best_chocolate_country_origin_n3, desc(mean_by_country)))
+    ```
+
+    Excluding countries of bean origins that have less than 10 chocolate bar reviews, the top 3 countries with the highest ratings on average are Solomon Islands, Congo, and Cuba.
+
+7.  For this last part, let’s explore the relationship between percent chocolate and ratings. Use the functions in `dplyr`, `tidyr`, and `lubridate` to perform the following steps to the `chocolate` dataset:
 
 ```         
 ```
