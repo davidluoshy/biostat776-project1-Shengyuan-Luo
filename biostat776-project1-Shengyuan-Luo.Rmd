@@ -134,18 +134,41 @@ glimpse(chocolate)
 
 7.  For this last part, let’s explore the relationship between percent chocolate and ratings. Use the functions in `dplyr`, `tidyr`, and `lubridate` to perform the following steps to the `chocolate` dataset:
 
+    1.  Identify the countries of bean origin with at least 50 reviews. Remove reviews from countries are not in this list.
+
+        ```{r}
+           chocolate_n <- chocolate %>%
+            mutate(n=1)
+          
+            chocolate_n2 <- chocolate_n %>%
+              group_by(country_of_bean_origin) %>%
+              mutate(n_by_origin_country=sum(n, na.rm = TRUE))  
+            
+            chocolate_n4 <- filter(chocolate_n2, n_by_origin_country>=50)
+            
+            print(chocolate_n4)
+        ```
+
+    2.  Using the variable describing the chocolate percentage for each review, create a new column that groups chocolate percentages into one of four groups: (i) \<60%, (ii) \>=60 to \<70%, (iii) \>=70 to \<90%, and (iii) \>=90% (**Hint** check out the `substr()` function in base R and the `case_when()` function from `dplyr` – see example below).
+
+    3.  Using the new column described in #2, re-order the factor levels (if needed) to be starting with the smallest percentage group and increasing to the largest percentage group (**Hint** check out the `fct_relevel()` function from `forcats`).
+
+    4.  For each country, make a set of four side-by-side boxplots plotting the groups on the x-axis and the ratings on the y-axis. These plots should be faceted by country.
+
+        On average, which category of chocolate percentage is most highly rated? Do these countries mostly agree or are there disagreements?
+
 ```         
 ```
 
 ## Part 2: **Join two datasets together**
 
-## Part 3:
+## Part 3: **Convert wide data into long data**
 
-## Part 4:
+## Part 4: **Data visualization**
 
-## Part 5:
+## Part 5: **Make the worst plot you can!**
 
-## Part6: Including Plots
+## Part 6: Including Plots
 
 You can also embed plots, for example:
 
