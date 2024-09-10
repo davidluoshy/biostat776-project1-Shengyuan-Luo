@@ -16,8 +16,6 @@ Here I load packages "here", "tidyverse", and "tidytuesday"
 ```{r}
 library("here")
 library("tidyverse")
-install.packages("pak")
-pak::pak("dslc-io/tidytuesdayR")
 ```
 
 Next I create a directory named "data." The if statement helps avoid re-creating the directory if it already exists.
@@ -69,13 +67,13 @@ glimpse(chocolate)
 
     ```{r}
         choc.Ecuador <- filter(chocolate, country_of_bean_origin =="Ecuador")
-        n_Ecuador <- tibble(country_of_bean_origin="Ecuador", n=1)
-        left_join(x=choc.Ecuador, y=n_Ecuador, by="country_of_bean_origin")
+        n_Ecuador <- tibble(country_of_bean_origin="Ecuador", nn=1)
+        choc.Ecuador_n1 <- left_join(x=choc.Ecuador, y=n_Ecuador, by="country_of_bean_origin")
         
-        summarize(choc.Ecuador,
+        summarise(choc.Ecuador_n1 ,
            mean = mean(rating, na.rm = TRUE),
            sd = sd(rating,  na.rm = TRUE),
-           total = sum(n,  na.rm = TRUE)
+           total = sum(nn, na.rm = TRUE)
          )
     ```
 
@@ -117,13 +115,13 @@ glimpse(chocolate)
       
         chocolate_n2 <- chocolate_n %>%
           group_by(country_of_bean_origin) %>%
-          mutate(n_by_origin_country=sum(n, na.rm = TRUE))
-
+          mutate(n_by_origin_country=sum(as.integer(n)))
+        
         chocolate_n3 <- filter(chocolate_n2, n_by_origin_country>=10)
 
         best_chocolate_country_origin_n3 <- chocolate_n3 %>%
         group_by(country_of_bean_origin) %>%
-        summarize(
+        summarise(
           mean_by_country = mean(rating, na.rm = TRUE)
         )
      
@@ -132,35 +130,51 @@ glimpse(chocolate)
 
     Excluding countries of bean origins that have less than 10 chocolate bar reviews, the top 3 countries with the highest ratings on average are Solomon Islands, Congo, and Cuba.
 
-7.  For this last part, let’s explore the relationship between percent chocolate and ratings. Use the functions in `dplyr`, `tidyr`, and `lubridate` to perform the following steps to the `chocolate` dataset:
+7.  For this last part, let's let’s explore the relationship between percent chocolate and ratings. Use the functions in `dplyr`, `tidyr`, and `lubridate` to perform the following steps to the `chocolate` dataset:
 
     1.  Identify the countries of bean origin with at least 50 reviews. Remove reviews from countries are not in this list.
 
-        ```{r}
-           chocolate_n <- chocolate %>%
-            mutate(n=1)
-          
-            chocolate_n2 <- chocolate_n %>%
-              group_by(country_of_bean_origin) %>%
-              mutate(n_by_origin_country=sum(n, na.rm = TRUE))  
-            
-            chocolate_n4 <- filter(chocolate_n2, n_by_origin_country>=50)
-            
-            print(chocolate_n4)
-        ```
+    ```{r}
+        chocolate_n4 <- filter(chocolate_n2, n_by_origin_country>=50)
+        
+        chocolate_n4 %>%
+          group_by(country_of_bean_origin) %>%
+          summarise(
+          total_reviews = sum(as.integer(n))
+          )
+    ```
 
     2.  Using the variable describing the chocolate percentage for each review, create a new column that groups chocolate percentages into one of four groups: (i) \<60%, (ii) \>=60 to \<70%, (iii) \>=70 to \<90%, and (iii) \>=90% (**Hint** check out the `substr()` function in base R and the `case_when()` function from `dplyr` – see example below).
 
+    ```{r}
+    cp <- tibble(
+      chocolate_percentage = as.numeric(substr(chocolate_n4$cocoa_percent,1,2))
+    )
+    chocolate_n5 <- c(chocolate_n4, cp)
+
+    cat_chocolate_percentage <- tibble(cat_chocolate_percentage = case_when(  
+      chocolate_n5$chocolate_percentage < 60 ~ "i",
+      chocolate_n5$chocolate_percentage >= 60 & chocolate_n5$chocolate_percentage <70 ~ "ii",
+      chocolate_n5$chocolate_percentage >= 70 & chocolate_n5$chocolate_percentage <90 ~ "iii",
+      chocolate_n5$chocolate_percentage >= 90 & chocolate_n5$chocolate_percentage <=100 ~ "iv",
+      TRUE ~ as.character(chocolate_n5$chocolate_percentage)
+    ))
+
+    chocolate_n6 <- as_tibble(c(chocolate_n5, cat_chocolate_percentage))
+    glimpse(chocolate_n6)
+    ```
+
     3.  Using the new column described in #2, re-order the factor levels (if needed) to be starting with the smallest percentage group and increasing to the largest percentage group (**Hint** check out the `fct_relevel()` function from `forcats`).
+
+    ```{r}
+    print(arrange(chocolate_n6, cat_chocolate_percentage))
+    ```
 
     4.  For each country, make a set of four side-by-side boxplots plotting the groups on the x-axis and the ratings on the y-axis. These plots should be faceted by country.
 
-        On average, which category of chocolate percentage is most highly rated? Do these countries mostly agree or are there disagreements?
+    On average, which category of chocolate percentage is most highly rated? Do these countries mostly agree or are there disagreements?
 
-```         
-```
-
-## Part 2: **Join two datasets together**
+## Part 2: Join two datasets together
 
 ## Part 3: **Convert wide data into long data**
 
@@ -170,10 +184,4 @@ glimpse(chocolate)
 
 ## Part 6: Including Plots
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+You can also embed plots, for example:Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
