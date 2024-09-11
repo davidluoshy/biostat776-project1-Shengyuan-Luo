@@ -202,7 +202,7 @@ as_tibble(gapminder)
     country_to_continent <-data.frame(
       country_of_bean_origin = gapminder$country,
       continent = gapminder$continent,
-      stringsAsFactors = FALSE
+      stringsAsFactors = TRUE
     )
     country_to_continent_unique <-unique(as_tibble(country_to_continent))
 
@@ -214,12 +214,40 @@ as_tibble(gapminder)
 2.  Only keep reviews that have reviews from countries of bean origin with at least 10 reviews.
 
     ```{r}
+    chocolate_continent_n <- chocolate_continent %>%
+          mutate(n=1)
+      
+    chocolate_continent_n2 <- chocolate_continent_n %>%
+          group_by(country_of_bean_origin) %>%
+          mutate(n_by_origin_country=sum(n))
+        
+    chocolate_continent_n3 <- filter(chocolate_continent_n2, n_by_origin_country>=10)
 
+    glimpse(chocolate_continent_n3)
     ```
 
 3.  Also, remove the country of bean origin named `"Blend"`.
 
+    ```{r}
+    chocolate_continent_n4 <-filter(chocolate_continent_n3, country_of_bean_origin!="Blend")
+    glimpse(chocolate_continent_n4)
+    ```
+
 4.  Make a set of violin plots with ratings on the y-axis and `continent`s on the x-axis.
+
+    ```{r}
+    chocolate_continent_n4$continent <-as.character(chocolate_continent_n4$continent)
+    chocolate_continent_n4$continent[is.na(chocolate_continent_n4$continent)] <- "Other"
+    chocolate_continent_n4$continent <- factor(chocolate_continent_n4$continent)
+    glimpse(chocolate_continent_n4)
+
+    chocolate_continent_n4 %>%
+        ggplot(aes(
+            x = as.factor(continent),
+            y = rating
+        )) +
+        geom_violin()
+    ```
 
 ## Part 3: **Convert wide data into long data**
 
