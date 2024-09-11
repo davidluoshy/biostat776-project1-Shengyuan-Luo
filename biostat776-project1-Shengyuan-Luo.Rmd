@@ -51,7 +51,8 @@ glimpse(chocolate)
 1.  Make a histogram of the `rating` scores to visualize the overall distribution of scores. Change the number of bins from the default to 10, 15, 20, and 25. Pick on the one that you think looks the best. Explain what the difference is when you change the number of bins and explain why you picked the one you did.
 
     ```{r}
-    qplot(rating, data = chocolate, bins =10)
+    Figure1 <- qplot(rating, data = chocolate, bins =10)
+    Figure1
     ```
 
     Number of bins set to 10. The histogram looks worse with more bins as categories with zero observations will start to appear.
@@ -172,7 +173,12 @@ glimpse(chocolate)
 
     4.  For each country, make a set of four side-by-side boxplots plotting the groups on the x-axis and the ratings on the y-axis. These plots should be faceted by country.
 
-    On average, which category of chocolate percentage is most highly rated? Do these countries mostly agree or are there disagreements?
+        ```{r}
+        install.packages("ggplot2")
+        library(ggplot2)
+        ```
+
+        On average, which category of chocolate percentage is most highly rated? Do these countries mostly agree or are there disagreements?
 
 ## Part 2: Join two datasets together
 
@@ -184,4 +190,4 @@ glimpse(chocolate)
 
 ## Part 6: Including Plots
 
-You can also embed plots, for example:Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+You can also embed plots, for <example:Note> that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
