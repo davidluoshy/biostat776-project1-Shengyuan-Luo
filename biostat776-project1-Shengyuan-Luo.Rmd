@@ -406,7 +406,6 @@ as_tibble(gapminder)
            mean_score = value
         )
       
-
     for (i in 1:nrow(data_by_year_long)) {
       if (is.na(data_by_year_long$feature[i])==FALSE) {
        data_by_year_long$feature[i] = paste0("char_", data_by_year_long$feature[i])
@@ -436,6 +435,21 @@ Use the functions in `ggplot2` package to make a scatter plot of the `mean_score
 
 Consider playing around with the `theme()` function to make the figure shine, including playing with background colors, font, etc. See <https://github.com/lcolladotor/jhustatcomputing/issues/4> for an example on how you can choose colors if you have too many categories.
 
+```{r}
+plot_part4 <- ggplot(data_by_year_long, aes(x = review_date, y = mean_score)) +
+  geom_point() +
+  geom_smooth(se = FALSE) + 
+  facet_wrap(~ feature) +
+  labs(
+    title = "Mean score over review year by feature",
+    subtitle = "Declining scores for letchin, vanilla, and char_butter in the past 2 decades",
+    caption = "Plotted by Shengyuan Luo", 
+        x = "Review year",
+        y = "Percentage of feature (x100%)"
+  )
+plot_part4
+```
+
 ## Part 5: **Make the worst plot you can!**
 
 Using the `chocolate` dataset (or any of the modified versions you made throughout this assignment or anything else you wish you build upon it):
@@ -443,6 +457,35 @@ Using the `chocolate` dataset (or any of the modified versions you made througho
 1.  Make the absolute worst plot that you can. You need to customize it in **at least 7 ways** to make it awful.
 
 2.  In your document, write 1 - 2 sentences about each different customization you added (using bullets – i.e. there should be at least 7 bullet points each with 1-2 sentences), and how it could be useful for you when you want to make an awesome data visualization.
+
+    ```{r}
+    plot_part4_worst <- ggplot(data_by_year_long, aes(x = review_date, y = mean_score)) +
+      geom_point(      size = 10) +
+      geom_smooth(    linewidth = 20,se = FALSE) + 
+      facet_grid(. ~ feature) +
+      labs(
+        title = "mean_score of review_date by feature"
+      ) +
+      ylim(0.1, 0.9) +
+      xlim(2015, 2020)
+    plot_part4_worst
+    ```
+
+    Customization:
+
+    1) Absence of x- and y- labels. Axis labels can help readers understand the graph much more easily.
+
+    2) Uninformative overall title. Same as axis labels, an informative label makes the graph friendlier to readers.
+
+    3) Oversized scatter plot points. Optimizing the size of points help preserve information and make plots more aesthestic.
+
+    4) Oversized line. Same as points, optimizing regression lines help the illustration of data and make plots more aesthestic.
+
+    5) Over-crowded facets in one row. An optimal facet grid to evenly distribute data improves data visualization.
+
+    6) Bad y-axis range. An ideal y-axis range helps readers focus on the most important parts of data.
+
+    7) Bad x-axis range. Like y-axis, setting the range for the x-axis help demonstrate the most important data that the author wants to present.
 
 ## Part 6: **Make my plot a better plot!**
 
@@ -465,3 +508,19 @@ chocolate %>%
     ```{r}
 
     ```
+
+    Customizations:
+
+    1)
+
+    2)
+
+    3)
+
+    4)
+
+    5)
+
+    6)
+
+    7)
