@@ -542,3 +542,11 @@ chocolate %>%
     6) Overlie jitter dots to further enhance the plot.
 
     7) Change legend title to "review year" to replace original variable name.
+
+# **R session information**
+
+```{r}
+options(width = 120)
+sessioninfo::session_info()
+```
+
