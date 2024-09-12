@@ -260,7 +260,8 @@ as_tibble(gapminder)
         sugar=NA,
         cocoa_butter=NA,
         vanilla=NA,
-        letchin=NA)
+        letchin=NA,
+        salt=NA)
 
     for (i in 1:nrow(chocolate_part3)){
       
@@ -298,21 +299,169 @@ as_tibble(gapminder)
       else {
         chocolate_part3$letchin[i]<-0
       }
+      
+      if (length(grep("Sa",chocolate_part3$ingredients[i],ignore.case=TRUE))>0) {
+        chocolate_part3$salt[i]<-1
+      }
+      else {
+        chocolate_part3$salt[i]<-0
+      }
     }
-
     glimpse(chocolate_part3)
     ```
 
 2.  Create a new set of columns titled `char_cocoa`, `char_sweet`, `char_nutty`, `char_creamy`, `char_roasty`, `char_earthy` that contain a 1 or 0 representing whether or not that the most memorable characteristic for the chocolate bar had that word (1) or not (0). For example, if the word “sweet” appears in the `most_memorable_characteristics`, then record a 1, otherwise a 0 for that review in the `char_sweet` column (**Hint**: check out `str_detect()` from the `stringr` package).
 
+    ```{r}
+    chocolate_part3_2<-chocolate_part3 %>% 
+      mutate(
+        char_cocoa=NA,
+        char_sweet=NA,
+        char_nutty=NA,
+        char_creamy=NA,
+        char_roasty=NA,
+        char_earthy=NA)
+
+    for (i in 1:nrow(chocolate_part3_2)){
+      
+      if (length(grep("cocoa",chocolate_part3$most_memorable_characteristics[i],ignore.case=TRUE))>0) {
+        chocolate_part3_2$char_cocoa[i]<-1
+      }
+      else {
+        chocolate_part3_2$char_cocoa[i]<-0
+      }
+      
+      if (length(grep("sweet",chocolate_part3$most_memorable_characteristics[i],ignore.case=TRUE))>0) {
+        chocolate_part3_2$char_sweet[i]<-1
+      }
+      else {
+        chocolate_part3_2$char_sweet[i]<-0
+      }
+      
+      if (length(grep("nutty",chocolate_part3$most_memorable_characteristics[i],ignore.case=TRUE))>0) {
+        chocolate_part3_2$char_nutty[i]<-1
+      }
+      else {
+        chocolate_part3_2$char_nutty[i]<-0
+      }
+      
+      if (length(grep("cream",chocolate_part3$most_memorable_characteristics[i],ignore.case=TRUE))>0) {
+        chocolate_part3_2$char_creamy[i]<-1
+      }
+      else {
+        chocolate_part3_2$char_creamy[i]<-0
+      }
+      
+     if (length(grep("roasty",chocolate_part3$most_memorable_characteristics[i],ignore.case=TRUE))>0) {
+        chocolate_part3_2$char_roasty[i]<-1
+      }
+      else {
+        chocolate_part3_2$char_roasty[i]<-0
+      }
+      
+     if (length(grep("earthy",chocolate_part3$most_memorable_characteristics[i],ignore.case=TRUE))>0) {
+        chocolate_part3_2$char_earthy[i]<-1
+      }
+      else {
+        chocolate_part3_2$char_earthy[i]<-0
+      }
+    }
+    glimpse(chocolate_part3_2)
+    ```
+
 3.  For each year (i.e. `review_date`), calculate the mean value in each new column you created across all reviews for that year. (**Hint**: If all has gone well thus far, you should have a dataset with 16 rows and 13 columns).
+
+    ```{r}
+      data_by_year <- chocolate_part3_2 %>%
+        group_by(review_date) %>%
+        summarize(
+          mean_beans = mean(beans, na.rm = TRUE),
+          mean_sugar = mean(sugar, na.rm = TRUE),
+          mean_cocoa_butter = mean(cocoa_butter, na.rm = TRUE),
+          mean_vanilla = mean(vanilla, na.rm = TRUE),
+          mean_letchin = mean(letchin, na.rm = TRUE),
+          mean_salt = mean(salt, na.rm = TRUE),
+          mean_char_cocoa = mean(char_cocoa, na.rm = TRUE),
+          mean_char_sweet = mean(char_sweet, na.rm = TRUE),
+          mean_char_nutty = mean(char_nutty, na.rm = TRUE),
+          mean_char_creamy = mean(char_creamy, na.rm = TRUE),
+          mean_char_roasty = mean(char_roasty, na.rm = TRUE),
+          mean_char_earthy = mean(char_earthy, na.rm = TRUE)
+        )
+      print(data_by_year)
+    ```
 
 4.  Convert this wide dataset into a long dataset with a new `feature` and `mean_score` column.
 
+    ```{r}
+    data_by_year_long <- data_by_year %>%
+         pivot_longer(
+             cols = starts_with("mean_"),  
+             names_to = c("mean", "feature1", "feature"), 
+             names_sep = "_"              
+         )
+
+    data_by_year_long <- data_by_year_long %>%
+      rename(
+           mean_score = value
+        )
+      
+
+    for (i in 1:nrow(data_by_year_long)) {
+      if (is.na(data_by_year_long$feature[i])==FALSE) {
+       data_by_year_long$feature[i] = paste0("char_", data_by_year_long$feature[i])
+      }
+      else {
+        data_by_year_long$feature[i] = data_by_year_long$feature1[i]
+      }
+    }
+
+    data_by_year_long<- data_by_year_long %>%
+      select(-mean, -feature1)
+
+    print(data_by_year_long)
+    ```
+
 ## Part 4: **Data visualization**
+
+Use the functions in `ggplot2` package to make a scatter plot of the `mean_score`s (y-axis) over time (x-axis). There should be one plot (facet) for each `feature`. For full credit, your plot should include:
+
+1.  An overall title for the plot and a subtitle summarizing key trends that you found. Also include a caption in the figure with your name.
+
+2.  Both the observed points for the `mean_score`, but also a smoothed non-linear pattern of the trend
+
+3.  All plots should be shown in the one figure
+
+4.  There should be an informative x-axis and y-axis label
+
+Consider playing around with the `theme()` function to make the figure shine, including playing with background colors, font, etc. See <https://github.com/lcolladotor/jhustatcomputing/issues/4> for an example on how you can choose colors if you have too many categories.
 
 ## Part 5: **Make the worst plot you can!**
 
-## Part 6: Including Plots
+Using the `chocolate` dataset (or any of the modified versions you made throughout this assignment or anything else you wish you build upon it):
 
-You can also embed plots, for <example:Note> that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+1.  Make the absolute worst plot that you can. You need to customize it in **at least 7 ways** to make it awful.
+
+2.  In your document, write 1 - 2 sentences about each different customization you added (using bullets – i.e. there should be at least 7 bullet points each with 1-2 sentences), and how it could be useful for you when you want to make an awesome data visualization.
+
+## Part 6: **Make my plot a better plot!**
+
+The goal is to take my sad looking plot and make it better! If you’d like an [example](https://twitter.com/drmowinckels/status/1392136510468763652), here is a tweet I came across of someone who gave a talk about how to zhoosh up your ggplots.
+
+```{r}
+chocolate %>%
+    ggplot(aes(
+        x = as.factor(review_date),
+        y = rating,
+        fill = review_date
+    )) +
+    geom_violin()
+```
+
+1.  You need to customize it in **at least 7 ways** to make it better.
+
+2.  In your document, write 1 - 2 sentences about each different customization you added (using bullets – i.e. there should be at least 7 bullet points each with 1-2 sentences), describing how you improved it.
+
+    ```{r}
+
+    ```
