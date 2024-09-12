@@ -816,6 +816,93 @@ glimpse(chocolate_continent_n4)</code></pre>
 </div>
 <div id="part-3-convert-wide-data-into-long-data" class="section level2">
 <h2>Part 3: <strong>Convert wide data into long data</strong></h2>
+<ol style="list-style-type: decimal">
+<li><p>Create a new set of columns titled <code>beans</code>,
+<code>sugar</code>, <code>cocoa_butter</code>, <code>vanilla</code>,
+<code>letchin</code>, and <code>salt</code> that contain a 1 or 0
+representing whether or not that review for the chocolate bar contained
+that ingredient (1) or not (0).</p>
+<pre class="r"><code>chocolate_part3&lt;-chocolate %&gt;% 
+  mutate(
+    beans=NA,
+    sugar=NA,
+    cocoa_butter=NA,
+    vanilla=NA,
+    letchin=NA)
+
+for (i in 1:nrow(chocolate_part3)){
+
+  if (length(grep(&quot;B&quot;,chocolate_part3$ingredients[i],ignore.case=TRUE))&gt;0) {
+    chocolate_part3$beans[i]&lt;-1
+  }
+  else {
+    chocolate_part3$beans[i]&lt;-0
+  }
+
+  if (length(grep(&quot;S&quot;,chocolate_part3$ingredients[i],ignore.case=TRUE))&gt;0) {
+    chocolate_part3$sugar[i]&lt;-1
+  }
+  else {
+    chocolate_part3$sugar[i]&lt;-0
+  }
+
+  if (length(grep(&quot;C&quot;,chocolate_part3$ingredients[i],ignore.case=TRUE))&gt;0) {
+    chocolate_part3$cocoa_butter[i]&lt;-1
+  }
+  else {
+    chocolate_part3$cocoa_butter[i]&lt;-0
+  }
+
+  if (length(grep(&quot;V&quot;,chocolate_part3$ingredients[i],ignore.case=TRUE))&gt;0) {
+    chocolate_part3$vanilla[i]&lt;-1
+  }
+  else {
+    chocolate_part3$vanilla[i]&lt;-0
+  }
+
+ if (length(grep(&quot;L&quot;,chocolate_part3$ingredients[i],ignore.case=TRUE))&gt;0) {
+    chocolate_part3$letchin[i]&lt;-1
+  }
+  else {
+    chocolate_part3$letchin[i]&lt;-0
+  }
+}
+
+glimpse(chocolate_part3)</code></pre>
+<pre><code>## Rows: 2,530
+## Columns: 15
+## $ ref                              &lt;dbl&gt; 2454, 2458, 2454, 2542, 2546, 2546, 2…
+## $ company_manufacturer             &lt;chr&gt; &quot;5150&quot;, &quot;5150&quot;, &quot;5150&quot;, &quot;5150&quot;, &quot;5150…
+## $ company_location                 &lt;chr&gt; &quot;U.S.A.&quot;, &quot;U.S.A.&quot;, &quot;U.S.A.&quot;, &quot;U.S.A.…
+## $ review_date                      &lt;dbl&gt; 2019, 2019, 2019, 2021, 2021, 2021, 2…
+## $ country_of_bean_origin           &lt;chr&gt; &quot;Tanzania&quot;, &quot;Dominican Republic&quot;, &quot;Ma…
+## $ specific_bean_origin_or_bar_name &lt;chr&gt; &quot;Kokoa Kamili, batch 1&quot;, &quot;Zorzal, bat…
+## $ cocoa_percent                    &lt;chr&gt; &quot;76%&quot;, &quot;76%&quot;, &quot;76%&quot;, &quot;68%&quot;, &quot;72%&quot;, &quot;8…
+## $ ingredients                      &lt;chr&gt; &quot;3- B,S,C&quot;, &quot;3- B,S,C&quot;, &quot;3- B,S,C&quot;, &quot;…
+## $ most_memorable_characteristics   &lt;chr&gt; &quot;rich cocoa, fatty, bready&quot;, &quot;cocoa, …
+## $ rating                           &lt;dbl&gt; 3.25, 3.50, 3.75, 3.00, 3.00, 3.25, 3…
+## $ beans                            &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ sugar                            &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ cocoa_butter                     &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ vanilla                          &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+## $ letchin                          &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1…</code></pre></li>
+<li><p>Create a new set of columns titled <code>char_cocoa</code>,
+<code>char_sweet</code>, <code>char_nutty</code>,
+<code>char_creamy</code>, <code>char_roasty</code>,
+<code>char_earthy</code> that contain a 1 or 0 representing whether or
+not that the most memorable characteristic for the chocolate bar had
+that word (1) or not (0). For example, if the word “sweet” appears in
+the <code>most_memorable_characteristics</code>, then record a 1,
+otherwise a 0 for that review in the <code>char_sweet</code> column
+(<strong>Hint</strong>: check out <code>str_detect()</code> from the
+<code>stringr</code> package).</p></li>
+<li><p>For each year (i.e. <code>review_date</code>), calculate the mean
+value in each new column you created across all reviews for that year.
+(<strong>Hint</strong>: If all has gone well thus far, you should have a
+dataset with 16 rows and 13 columns).</p></li>
+<li><p>Convert this wide dataset into a long dataset with a new
+<code>feature</code> and <code>mean_score</code> column.</p></li>
+</ol>
 </div>
 <div id="part-4-data-visualization" class="section level2">
 <h2>Part 4: <strong>Data visualization</strong></h2>
