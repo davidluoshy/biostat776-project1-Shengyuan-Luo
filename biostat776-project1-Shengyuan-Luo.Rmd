@@ -506,21 +506,39 @@ chocolate %>%
 2.  In your document, write 1 - 2 sentences about each different customization you added (using bullets – i.e. there should be at least 7 bullet points each with 1-2 sentences), describing how you improved it.
 
     ```{r}
-
+    chocolate_better <- chocolate %>%
+        ggplot(aes(
+            x = as.factor(review_date),
+            y = rating,
+            fill = review_date
+        )) +  
+      labs(
+        title = "Coffee bean ratings during years 2006 through 2021",
+        subtitle = "Temporal trend towards improving coffee bean ratings over the past 2 decades",
+        caption = "Ratings range from 1 to 4. Width of density plot corresponds to number of reviews",
+        fill = "Review year",
+            x = "Review year",
+            y = "Ratings"
+      ) +
+          geom_violin(color = "dark blue") +
+      geom_jitter(width = 0.05, size = 0.15, color = "grey")+
+      theme_bw(
+      )
+    chocolate_better
     ```
 
     Customizations:
 
-    1)
+    1) Add title and subtitle to help understand the graph.
 
-    2)
+    2) Add descriptive axis labels.
 
-    3)
+    3) Add caption to further explain ratings.
 
-    4)
+    4) Make outline of violins dark blue so they look more aesthetically pleasing.
 
-    5)
+    5) Change background to black/white to make the graph more stark/plain.
 
-    6)
+    6) Overlie jitter dots to further enhance the plot.
 
-    7)
+    7) Change legend title to "review year" to replace original variable name.
